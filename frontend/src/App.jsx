@@ -96,7 +96,6 @@ const Footer = () => (
       </div>
       <div className="footer-bottom">
         <span>© 2026 RUKH Technology. All rights reserved.</span>
-        <span>Made with precision.</span>
       </div>
     </div>
   </footer>
