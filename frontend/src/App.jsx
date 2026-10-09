@@ -350,13 +350,64 @@ const Terms = () => (
   </div>
 );
 
-const Conduct = () => (
-  <div className="container" style={{ paddingTop: '80px', minHeight: '60vh' }}>
-    <span className="mono-tag" style={{ marginBottom: '24px', display: 'block' }}>COMMUNITY GUIDELINES</span>
-    <h1 style={{ fontSize: '4.5rem', marginBottom: '40px' }}>Code of <em>Conduct</em></h1>
-    <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>This document is currently being updated by our community team. Please check back later.</p>
-  </div>
-);
+const Conduct = () => {
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  return (
+    <div className="container" style={{ paddingTop: '80px' }}>
+      <span className="mono-tag" style={{ marginBottom: '24px', display: 'block' }}>COMMUNITY GUIDELINES</span>
+      <h1 style={{ fontSize: '4.5rem', marginBottom: '40px' }}>Rukh <em>Code of Conduct</em></h1>
+      
+      <div className="metadata-bar">
+        <div className="meta-item"><span className="mono-tag">Version</span><span className="value">1.2</span></div>
+        <div className="meta-item"><span className="mono-tag">Status</span><span className="value" style={{ color: 'var(--primary-accent)' }}>• Enforced</span></div>
+        <div className="meta-item"><span className="mono-tag">Effective Date</span><span className="value">July 14, 2026</span></div>
+      </div>
+
+      <div className="doc-layout">
+        <aside className="doc-sidebar">
+          <ul>
+            <li><a href="#section-1" onClick={(e) => { e.preventDefault(); scrollTo('section-1'); }}>1. Core Principles</a></li>
+            <li><a href="#section-2" onClick={(e) => { e.preventDefault(); scrollTo('section-2'); }}>2. Academic Integrity</a></li>
+            <li><a href="#section-3" onClick={(e) => { e.preventDefault(); scrollTo('section-3'); }}>3. Privacy</a></li>
+            <li><a href="#section-4" onClick={(e) => { e.preventDefault(); scrollTo('section-4'); }}>4. Intellectual Property</a></li>
+            <li><a href="#section-5" onClick={(e) => { e.preventDefault(); scrollTo('section-5'); }}>5. Violations</a></li>
+            <li><a href="#section-6" onClick={(e) => { e.preventDefault(); scrollTo('section-6'); }}>6. Reporting</a></li>
+          </ul>
+        </aside>
+
+        <main className="doc-content">
+          <h2 id="section-1">1. Core Principles</h2>
+          <p>Rukh is committed to providing a safe space for everyone, regardless of gender, race, nationality, religion, age, disability, or academic background. We have zero tolerance for harassment, discrimination, or offensive behavior of any kind.</p>
+
+          <h2 id="section-2">2. Academic Integrity and Collaboration</h2>
+          <h3>A. Original Work</h3>
+          <p>Rukh is an elite program built on practical competence. All lab exercises, projects, and code submissions must be your own work.</p>
+          <ul>
+            <li><strong>Plagiarism:</strong> Copying another participant's code or submitting work that is not yours is strictly forbidden.</li>
+            <li><strong>Collaboration:</strong> We encourage discussing concepts with peers, but you must write your own code.</li>
+          </ul>
+          <h3>B. Responsible AI Usage</h3>
+          <p>We encourage the use of AI tools to aid your education, but using AI to copy-paste complete code solutions without understanding them violates academic integrity.</p>
+
+          <h2 id="section-3">3. Privacy and Confidentiality</h2>
+          <p>Participants must respect the privacy of others. You may not share personal contact details, CVs, or project solutions of other participants outside Rukh without their consent.</p>
+
+          <h2 id="section-4">4. Intellectual Property</h2>
+          <p>As outlined in our Terms of Service, all lectures, slides, and materials provided by Rukh are our intellectual property. Recording lectures or redistribution of materials is a violation of both our intellectual property rights and this Code of Conduct.</p>
+
+          <h2 id="section-5">5. Consequences of Violations</h2>
+          <p>We take violations of this Code of Conduct very seriously. Depending on severity, actions may include a written warning, assignment disqualification, or immediate expulsion from the program.</p>
+
+          <h2 id="section-6">6. Reporting Violations</h2>
+          <p>If you witness or experience harassment or academic dishonesty, please report it immediately to admission@rukh.tech. We will handle all reports with discretion.</p>
+        </main>
+      </div>
+    </div>
+  );
+};
 
 // --- Courses Component ---
 const Courses = () => {
@@ -452,25 +503,31 @@ const Login = ({ onLogin }) => {
 };
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    firstName: '', lastName: '', email: '', phone: '', university: '', track: '', password: ''
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
+  const handleNext = (e) => { e.preventDefault(); setStep(s => Math.min(s + 1, 3)); };
+  const handlePrev = (e) => { e.preventDefault(); setStep(s => Math.max(s - 1, 1)); };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (step < 3) return handleNext(e);
+    
     try {
       const res = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify(formData)
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       
-      setSuccess('Application started. Redirecting...');
+      setSuccess('Application submitted successfully. Redirecting to portal...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
       setError(err.message);
@@ -478,28 +535,83 @@ const Register = () => {
   };
 
   return (
-    <div className="container" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ maxWidth: '400px', width: '100%', background: '#FFF', padding: '40px', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '10px' }}>Apply <em>Now</em></h2>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '30px' }}>Start your journey in the ecosystem.</p>
+    <div className="container" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
+      <div style={{ maxWidth: '550px', width: '100%', background: '#FFF', padding: '50px', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
+        <span className="mono-tag" style={{ marginBottom: '16px', display: 'block' }}>ADMISSIONS — 2026</span>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Apply to <em>Rukh</em></h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '30px' }}>Complete your application in about 3 minutes.</p>
+        
+        {/* Progress Bar */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '40px' }}>
+          {[1, 2, 3].map(s => (
+            <div key={s} style={{ height: '4px', flex: 1, background: s <= step ? 'var(--primary-accent)' : 'var(--border-subtle)', borderRadius: '2px', transition: 'all 0.3s' }} />
+          ))}
+        </div>
         
         {error && <div style={{ background: '#FEE', color: 'var(--primary-accent)', padding: '12px', borderRadius: '8px', marginBottom: '20px' }}>{error}</div>}
         {success && <div style={{ background: '#EFE', color: '#285e33', padding: '12px', borderRadius: '8px', marginBottom: '20px' }}>{success}</div>}
         
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
-            <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Full Name</label>
-            <input type="text" required value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit', fontSize: '1rem' }} />
+          {step === 1 && (
+            <>
+              <h3 style={{ marginBottom: '24px', fontFamily: 'Lora', fontSize: '1.4rem' }}>01 / 03: Personal Info</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                <div>
+                  <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>First Name *</label>
+                  <input type="text" required value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
+                </div>
+                <div>
+                  <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Last Name *</label>
+                  <input type="text" required value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
+                </div>
+              </div>
+              <div style={{ marginBottom: '20px' }}>
+                <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Email Address *</label>
+                <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
+              </div>
+              <div style={{ marginBottom: '30px' }}>
+                <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Phone Number *</label>
+                <input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
+              </div>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <h3 style={{ marginBottom: '24px', fontFamily: 'Lora', fontSize: '1.4rem' }}>02 / 03: Education & Track</h3>
+              <div style={{ marginBottom: '20px' }}>
+                <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>University / School *</label>
+                <input type="text" required value={formData.university} onChange={e => setFormData({...formData, university: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
+              </div>
+              <div style={{ marginBottom: '30px' }}>
+                <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Select Preferred Track *</label>
+                <select required value={formData.track} onChange={e => setFormData({...formData, track: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: '#FFF', fontFamily: 'Outfit' }}>
+                  <option value="">Choose a track...</option>
+                  <option value="Kids">Kids Programming</option>
+                  <option value="Campus">University Campus Track</option>
+                  <option value="Projects">Academy Advanced Projects</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              <h3 style={{ marginBottom: '24px', fontFamily: 'Lora', fontSize: '1.4rem' }}>03 / 03: Account Security</h3>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>Create a secure password to access your application status and portal later.</p>
+              <div style={{ marginBottom: '30px' }}>
+                <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Password *</label>
+                <input type="password" required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
+              </div>
+            </>
+          )}
+
+          <div style={{ display: 'flex', gap: '16px', marginTop: '20px' }}>
+            {step > 1 && (
+              <button type="button" onClick={handlePrev} className="btn" style={{ background: '#EEE', color: 'var(--text-main)', flex: 1 }}>Back</button>
+            )}
+            <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>{step === 3 ? 'Submit Application' : 'Continue'}</button>
           </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Email Address</label>
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit', fontSize: '1rem' }} />
-          </div>
-          <div style={{ marginBottom: '30px' }}>
-            <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Password</label>
-            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit', fontSize: '1rem' }} />
-          </div>
-          <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Submit Application</button>
         </form>
         <p style={{ marginTop: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>
           Already applied? <Link to="/login" style={{ color: 'var(--text-main)', fontWeight: '600' }}>Login</Link>
