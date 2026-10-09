@@ -22,7 +22,7 @@ const courses = [
 
 // Register endpoint
 app.post('/api/register', async (req, res) => {
-  const { firstName, lastName, email, phone, university, track, password } = req.body;
+  const { firstName, lastName, email, university, track, password } = req.body;
   if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ error: 'Please fill in all required fields.' });
   }
@@ -31,7 +31,7 @@ app.post('/api/register', async (req, res) => {
     return res.status(400).json({ error: 'Email is already in use.' });
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = { id: users.length + 1, name: `${firstName} ${lastName}`, email, phone, university, track, password: hashedPassword };
+  const newUser = { id: users.length + 1, name: `${firstName} ${lastName}`, email, university, track, password: hashedPassword };
   users.push(newUser);
   res.status(201).json({ message: 'Application submitted successfully.' });
 });

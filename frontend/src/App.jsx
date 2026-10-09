@@ -218,7 +218,6 @@ const Privacy = () => {
           <ul>
             <li>Full Name</li>
             <li>Email Address</li>
-            <li>Phone Number</li>
             <li>Country and City of Residence</li>
           </ul>
           <h3>B. Academic and Educational Information</h3>
@@ -505,7 +504,7 @@ const Login = ({ onLogin }) => {
 const Register = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', phone: '', university: '', track: '', password: ''
+    firstName: '', lastName: '', email: '', university: '', track: '', password: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -568,10 +567,6 @@ const Register = () => {
               <div style={{ marginBottom: '20px' }}>
                 <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Email Address *</label>
                 <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
-              </div>
-              <div style={{ marginBottom: '30px' }}>
-                <label className="mono-tag" style={{ display: 'block', marginBottom: '8px' }}>Phone Number *</label>
-                <input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontFamily: 'Outfit' }} />
               </div>
             </>
           )}
